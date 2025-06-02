@@ -12,8 +12,7 @@ def make_lego_example() -> dict:
     return {
         "observation/primary": np.random.randint(256, size=(224, 224, 3), dtype=np.uint8),
         "observation/wrist": np.random.randint(256, size=(224, 224, 3), dtype=np.uint8),
-        "observation/joint": np.random.rand(7),
-        "observation/gripper": np.random.rand(1),
+        "observation/state": np.random.rand(7),
         "prompt": "do something",
     }
 
@@ -36,7 +35,7 @@ class LegoInputs(transforms.DataTransformFn):
     model_type: _model.ModelType = _model.ModelType.PI0
 
     def __call__(self, data: dict) -> dict:
-        state = np.concatenate([data["observation/joint"], data["observation/gripper"]])
+        state = data['observation/state']
         state = transforms.pad_to_dim(state, self.action_dim)
 
         # Possibly need to parse images to uint8 (H,W,C) since LeRobot automatically
@@ -64,7 +63,8 @@ class LegoInputs(transforms.DataTransformFn):
         }
 
         if "actions" in data:
-            inputs["actions"] = data["actions"]
+            actions = transforms.pad_to_dim(data["actions"], self.action_dim)
+            inputs["actions"] = actions
 
         if "prompt" in data:
             inputs["prompt"] = data["prompt"]

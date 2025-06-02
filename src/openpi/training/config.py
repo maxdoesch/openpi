@@ -268,10 +268,9 @@ class LeRobotLegoDataConfig(DataConfigFactory):
             inputs=[
                 _transforms.RepackTransform(
                     {
-                        "observation/primary": "primary",
-                        "observation/wrist": "wrist",
-                        "observation/joint": "joint",
-                        "observation/gripper": "gripper",
+                        "observation/primary": "observation.images.primary",
+                        "observation/wrist": "observation.images.wrist",
+                        "observation/state": "observation.state",
                         "actions": "actions",
                         "prompt": "prompt",
                     }
@@ -541,6 +540,23 @@ _CONFIGS = [
                 prompt_from_task=True,
             ),
         ),
+    ),
+    TrainConfig(
+        name="pi0_lego",
+        model=pi0.Pi0Config(),
+        data=LeRobotLegoDataConfig(
+            repo_id="lego_dataset",
+            base_config=DataConfig(
+                prompt_from_task=True
+            )
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_base/params"),
+        num_train_steps=30_000,
+        #LoRA
+        freeze_filter=pi0.Pi0Config(
+            paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"
+        ).get_freeze_filter(),
+        ema_decay=None,
     ),
     #
     # Fine-tuning Libero configs.
