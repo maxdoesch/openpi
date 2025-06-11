@@ -543,7 +543,7 @@ _CONFIGS = [
     ),
     TrainConfig(
         name="pi0_lego",
-        model=pi0.Pi0Config(),
+        model=pi0.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
         data=LeRobotLegoDataConfig(
             repo_id="lego_dataset",
             base_config=DataConfig(
