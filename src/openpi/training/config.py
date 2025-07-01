@@ -254,6 +254,8 @@ class LeRobotLegoDataConfig(DataConfigFactory):
     comments below.
     """
 
+    action_sequence_keys: Sequence[str] = ("action",)
+
     @override
     def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
         # The repack transform is *only* applied to the data coming from the dataset,
@@ -271,7 +273,7 @@ class LeRobotLegoDataConfig(DataConfigFactory):
                         "observation/primary": "observation.images.primary",
                         "observation/wrist": "observation.images.wrist",
                         "observation/state": "observation.state",
-                        "actions": "actions",
+                        "actions": "action",
                         "prompt": "prompt",
                     }
                 )
@@ -317,6 +319,7 @@ class LeRobotLegoDataConfig(DataConfigFactory):
             repack_transforms=repack_transform,
             data_transforms=data_transforms,
             model_transforms=model_transforms,
+            action_sequence_keys=self.action_sequence_keys,
         )
 
 
